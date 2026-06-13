@@ -1,104 +1,53 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { NAV_LINKS, WHATSAPP_URLS } from '@/lib/constants';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+
+const navLinks = [
+  { label: 'About', href: '#about' },
+  { label: 'Work', href: '#work' },
+  { label: 'Process', href: '#process' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+const whatsappUrl =
+  'https://wa.me/918074782997?text=Hi%20Abhinay%2C%20I%27m%20interested%20in%20a%20clinic%20website.';
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
 
-  /* ── Scroll detection ── */
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // initial check
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  /* ── Active section tracking ── */
-  useEffect(() => {
-    const sectionIds = NAV_LINKS.map((l) => l.href.replace('#', ''));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px' }
-    );
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  /* ── Smooth scroll handler ── */
-  const handleNavClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      e.preventDefault();
-      setMobileOpen(false);
-
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    },
-    []
-  );
-
-  /* ── Lock body scroll when mobile menu is open ── */
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+  const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileOpen]);
+    setMobileOpen(false);
+  };
 
   return (
-    <nav
-      className={`sticky top-0 z-[100] border-b border-border bg-base/85 backdrop-blur-[16px] transition-all duration-300 ${
-        scrolled ? 'py-2 backdrop-blur-[24px]' : 'py-4'
-      }`}
-      aria-label="Main navigation"
-    >
-      <div className="max-w-container mx-auto px-6 flex items-center justify-between">
-        {/* ── Logo ── */}
-        <a href="#" className="flex flex-col" aria-label="MakeMySites home">
-          <span className="text-[20px] font-bold text-text-primary leading-tight tracking-tight">
-            MakeMySites<span className="text-accent">.</span>
+    <header className="sticky top-0 z-50 backdrop-blur-[16px] bg-base/85 border-b border-border">
+      <nav className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex-shrink-0">
+          <span className="font-display text-xl text-text-primary tracking-tight">
+            MakeMySites
+            <span className="text-accent">·</span>
           </span>
-          <span className="text-[11px] text-text-muted leading-none mt-0.5">
+          <span className="block text-[11px] text-text-muted -mt-1">
             by Abhinay Kumar
           </span>
-        </a>
+        </div>
 
-        {/* ── Desktop links ── */}
-        <ul className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
+        {/* Center Links — desktop */}
+        <ul className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className={`text-sm transition-colors duration-200 hover:text-accent ${
-                  activeSection === link.href.replace('#', '')
-                    ? 'text-accent'
-                    : 'text-text-secondary'
-                }`}
-                aria-label={`Navigate to ${link.label}`}
+                onClick={(e) => handleNav(e, link.href)}
+                className="text-sm text-text-secondary hover:text-text-primary transition-colors"
               >
                 {link.label}
               </a>
@@ -106,81 +55,82 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* ── Desktop CTA ── */}
-        <a
-          href={WHATSAPP_URLS.hero}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden lg:inline-flex items-center gap-2 bg-whatsapp text-white rounded-btn px-6 py-3 font-bold text-sm transition-colors hover:bg-whatsapp-hover"
-          aria-label="Chat on WhatsApp"
-        >
-          WhatsApp Me →
-        </a>
-
-        {/* ── Mobile hamburger ── */}
-        <button
-          className="lg:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-[5px] z-[110]"
-          onClick={() => setMobileOpen((prev) => !prev)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
-        >
-          <span
-            className={`block w-6 h-[2px] bg-text-primary rounded-full transition-all duration-300 origin-center ${
-              mobileOpen ? 'rotate-45 translate-y-[7px]' : ''
-            }`}
-          />
-          <span
-            className={`block w-6 h-[2px] bg-text-primary rounded-full transition-all duration-300 ${
-              mobileOpen ? 'opacity-0 scale-x-0' : ''
-            }`}
-          />
-          <span
-            className={`block w-6 h-[2px] bg-text-primary rounded-full transition-all duration-300 origin-center ${
-              mobileOpen ? '-rotate-45 -translate-y-[7px]' : ''
-            }`}
-          />
-        </button>
-      </div>
-
-      {/* ── Mobile overlay menu ── */}
-      <div
-        className={`fixed inset-0 z-[105] bg-base/95 backdrop-blur-[20px] flex flex-col transition-all duration-300 lg:hidden ${
-          mobileOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="flex-1 flex flex-col items-center justify-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className={`text-2xl font-display font-bold transition-colors duration-200 hover:text-accent ${
-                activeSection === link.href.replace('#', '')
-                  ? 'text-accent'
-                  : 'text-text-primary'
-              }`}
-              aria-label={`Navigate to ${link.label}`}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-
-        {/* ── Mobile CTA at bottom ── */}
-        <div className="p-6 pb-10">
+        {/* Right — WhatsApp CTA */}
+        <div className="hidden md:flex items-center">
           <a
-            href={WHATSAPP_URLS.hero}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full bg-whatsapp text-white rounded-btn px-6 py-4 font-bold text-base transition-colors hover:bg-whatsapp-hover"
-            aria-label="Chat on WhatsApp"
+            className="hidden lg:inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-hover text-white text-sm font-medium px-4 py-2 rounded-btn transition-colors"
           >
-            WhatsApp Me →
+            📱 WhatsApp Me →
+          </a>
+          {/* Tablet — icon only */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-btn bg-whatsapp hover:bg-whatsapp-hover text-white transition-colors"
+            aria-label="WhatsApp"
+          >
+            📱
           </a>
         </div>
-      </div>
-    </nav>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden flex items-center justify-center w-10 h-10 text-text-secondary hover:text-text-primary transition-colors"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+        >
+          <Menu size={24} />
+        </button>
+      </nav>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-[9998] bg-base/95 backdrop-blur-xl flex flex-col md:hidden">
+          <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between w-full">
+            <div className="flex-shrink-0">
+              <span className="font-display text-xl text-text-primary tracking-tight">
+                MakeMySites
+                <span className="text-accent">·</span>
+              </span>
+              <span className="block text-[11px] text-text-muted -mt-1">
+                by Abhinay Kumar
+              </span>
+            </div>
+            <button
+              className="flex items-center justify-center w-10 h-10 text-text-secondary hover:text-text-primary transition-colors"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <nav className="flex flex-col items-center justify-center flex-1 gap-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNav(e, link.href)}
+                className="text-2xl font-display text-text-secondary hover:text-text-primary transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-hover text-white text-sm font-medium px-6 py-3 rounded-btn transition-colors"
+            >
+              📱 WhatsApp Me →
+            </a>
+          </nav>
+        </div>
+      )}
+    </header>
   );
 }

@@ -1,8 +1,23 @@
 'use client';
 
-import { useScrollReveal } from '@/lib/animations';
+import { useEffect } from 'react';
 
 export default function ScrollRevealProvider() {
-  useScrollReveal();
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return null;
 }

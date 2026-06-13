@@ -1,63 +1,70 @@
-import { CONTACT, WHATSAPP_URLS, NAV_LINKS, FOOTER_SERVICES } from '@/lib/constants';
-import { Linkedin, Github, Instagram, Phone, Mail } from 'lucide-react';
+import { Linkedin, Github } from 'lucide-react';
+
+const services = [
+  'Clinic & Doctor Websites',
+  'Landing Pages',
+  'SEO Optimization',
+  'AI Integration',
+  'E-Commerce',
+];
+
+const navigateLinks = [
+  { label: 'About', href: '#about' },
+  { label: 'Work', href: '#work' },
+  { label: 'Process', href: '#process' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
+  { label: 'Contact', href: '#contact' },
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-base border-t border-border">
-      <div className="max-w-container mx-auto px-6 py-16">
-        {/* 4 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-base py-16 border-t border-border">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1 — Brand */}
           <div>
-            <p className="text-xl font-bold text-text-primary">
-              MakeMySites<span className="text-accent">.</span>
-            </p>
-            <p className="text-sm text-text-secondary mt-2">
+            <span className="font-display text-xl text-text-primary tracking-tight">
+              MakeMySites
+              <span className="text-accent">·</span>
+            </span>
+            <p className="text-text-secondary text-sm mt-2">
               Clinic websites that convert patients.
             </p>
-            <p className="text-sm text-text-muted mt-1">Hyderabad · India</p>
-
-            {/* Social icons */}
-            <div className="flex gap-3 mt-4">
+            <p className="text-text-muted text-xs mt-3">
+              📍 Hyderabad · India
+            </p>
+            <div className="flex items-center gap-4 mt-4">
               <a
-                href={CONTACT.linkedin}
+                href="https://www.linkedin.com/in/abhinay-kumar-tippani/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="text-text-muted hover:text-text-primary transition-colors"
                 aria-label="LinkedIn"
-                className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-all"
               >
-                <Linkedin size={16} />
+                <Linkedin size={18} />
               </a>
               <a
-                href={CONTACT.github}
+                href="https://github.com/abhinay-kumar-tippani/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="text-text-muted hover:text-text-primary transition-colors"
                 aria-label="GitHub"
-                className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-all"
               >
-                <Github size={16} />
-              </a>
-              <a
-                href={CONTACT.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-all"
-              >
-                <Instagram size={16} />
+                <Github size={18} />
               </a>
             </div>
           </div>
 
           {/* Column 2 — Services */}
           <div>
-            <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
+            <h4 className="text-text-primary font-semibold text-sm mb-4">
               Services
             </h4>
-            <ul>
-              {FOOTER_SERVICES.map((service) => (
-                <li key={service} className="mb-2">
-                  <span className="text-sm text-text-secondary hover:text-text-primary transition-colors cursor-default">
+            <ul className="space-y-3">
+              {services.map((service) => (
+                <li key={service}>
+                  <span className="text-text-muted text-sm hover:text-text-secondary transition-colors cursor-default">
                     {service}
                   </span>
                 </li>
@@ -65,70 +72,68 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 — Navigation */}
+          {/* Column 3 — Navigate */}
           <div>
-            <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
-              Navigation
+            <h4 className="text-text-primary font-semibold text-sm mb-4">
+              Navigate
             </h4>
-            <ul>
-              {NAV_LINKS.map((link) => (
-                <li key={link.label} className="mb-2">
+            <ul className="space-y-3">
+              {navigateLinks.map((link) => (
+                <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm text-text-secondary hover:text-text-primary transition-colors"
+                    className="text-text-muted text-sm hover:text-text-secondary transition-colors"
                   >
                     {link.label}
                   </a>
                 </li>
               ))}
-              <li className="mb-2">
-                <a
-                  href="#contact"
-                  className="text-sm text-text-secondary hover:text-text-primary transition-colors"
-                >
-                  Contact
-                </a>
-              </li>
             </ul>
           </div>
 
           {/* Column 4 — Contact */}
           <div>
-            <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
-              Contact
+            <h4 className="text-text-primary font-semibold text-sm mb-4">
+              Get In Touch
             </h4>
-            <div className="space-y-3">
-              <a
-                href={WHATSAPP_URLS.default}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="WhatsApp contact"
-              >
-                <Phone size={14} />
-                {CONTACT.whatsappDisplay}
-              </a>
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="Email contact"
-              >
-                <Mail size={14} />
-                {CONTACT.email}
-              </a>
-              <p className="text-sm text-text-muted mt-3">
-                Based in Hyderabad, India
-              </p>
-              <p className="text-sm text-text-muted">Response within 2 hours</p>
-            </div>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="https://wa.me/918074782997"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-muted text-sm hover:text-text-secondary transition-colors"
+                >
+                  📱 +91 8074782997
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:tippaniabhinay@gmail.com"
+                  className="text-text-muted text-sm hover:text-text-secondary transition-colors"
+                >
+                  ✉️ tippaniabhinay@gmail.com
+                </a>
+              </li>
+              <li>
+                <span className="text-text-muted text-sm">
+                  📍 Hyderabad, Telangana
+                </span>
+              </li>
+              <li>
+                <span className="text-accent text-sm">
+                  ⚡ Reply within 2 hours
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-text-muted">© {new Date().getFullYear()} MakeMySites.in</p>
-          <p className="text-sm text-text-muted">
-            Designed &amp; built with ☕ in Hyderabad by Abhinay Kumar
+        <div className="border-t border-border mt-12 pt-8">
+          <p className="text-text-muted text-xs text-center">
+            © 2026 MakeMySites.in &nbsp;·&nbsp; Built with ☕ in Hyderabad by
+            Abhinay Kumar
           </p>
         </div>
       </div>

@@ -1,156 +1,130 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
-import { PROJECTS } from '@/lib/constants';
 
-type Category = 'clinic' | 'other';
+const clinicProjects = [
+  {
+    type: 'Dental Clinic',
+    name: 'Mamra Dental Studio',
+    location: 'Jubilee Hills · Hyderabad',
+    result: 'Appointment inquiries started within the first week of launch',
+    gradient: 'bg-gradient-to-br from-[#0f172a] to-[#1e3a5f]',
+    delay: 1,
+  },
+  {
+    type: 'Dermatologist',
+    name: 'Dr. Priya Sharma',
+    location: 'Dermatologist · Hyderabad',
+    result: 'Patients now discover the clinic directly through Google Search',
+    gradient: 'bg-gradient-to-br from-[#1a0533] to-[#2d1b5e]',
+    delay: 2,
+  },
+  {
+    type: 'Dental Clinic',
+    name: 'Smile Care Dental',
+    location: 'Madhapur · Hyderabad',
+    result: 'First online presence built; Google-indexed within 2 weeks',
+    gradient: 'bg-gradient-to-br from-[#0a2a1a] to-[#1a4a2e]',
+    delay: 3,
+  },
+];
+
+type Tab = 'clinic' | 'other';
 
 export default function FeaturedWork() {
-  const [activeTab, setActiveTab] = useState<Category>('clinic');
-
-  const filtered = PROJECTS.filter((p) => p.category === activeTab);
-  const featured = filtered.find((p) => p.featured);
-  const rest = filtered.filter((p) => p !== featured);
+  const [activeTab, setActiveTab] = useState<Tab>('clinic');
 
   return (
-    <section id="work" className="py-16 lg:py-24">
-      <div className="max-w-container mx-auto px-6">
+    <section id="work" className="py-24 bg-surface">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="fade-up">
-          <span className="section-label">{'// MY WORK'}</span>
-          <h2 className="font-display text-h2 text-text-primary mt-4">
+        <div className="text-center">
+          <span className="section-label">// MY WORK</span>
+          <h2 className="text-h2 font-display font-bold text-text-primary mt-4">
             Clinic Websites That Actually Convert
           </h2>
-          <p className="text-body-lg text-text-secondary mt-4 max-w-2xl">
-            Every site is built with one goal: more patients contacting your clinic.
+          <p className="text-body-lg text-text-secondary mt-3 max-w-xl mx-auto">
+            Every site is built with one goal: more patients contacting your
+            clinic.
           </p>
         </div>
 
         {/* Tab pills */}
-        <div className="flex gap-2 mb-12 mt-10">
+        <div className="mt-8 flex justify-center gap-3">
           <button
             onClick={() => setActiveTab('clinic')}
-            aria-label="Show clinic website projects"
-            className={`rounded-pill px-5 py-2 text-sm font-semibold transition-all ${
+            className={
               activeTab === 'clinic'
-                ? 'bg-accent text-white'
-                : 'bg-card border border-border text-text-secondary hover:text-text-primary'
-            }`}
+                ? 'bg-accent text-white px-5 py-2 rounded-pill text-sm font-semibold transition-colors'
+                : 'bg-card border border-border text-text-secondary px-5 py-2 rounded-pill text-sm font-semibold hover:border-border-hover transition-colors'
+            }
           >
             Clinic Websites
           </button>
           <button
             onClick={() => setActiveTab('other')}
-            aria-label="Show other projects"
-            className={`rounded-pill px-5 py-2 text-sm font-semibold transition-all ${
+            className={
               activeTab === 'other'
-                ? 'bg-accent text-white'
-                : 'bg-card border border-border text-text-secondary hover:text-text-primary'
-            }`}
+                ? 'bg-accent text-white px-5 py-2 rounded-pill text-sm font-semibold transition-colors'
+                : 'bg-card border border-border text-text-secondary px-5 py-2 rounded-pill text-sm font-semibold hover:border-border-hover transition-colors'
+            }
           >
             Other Projects
           </button>
         </div>
 
-        {/* Featured project */}
-        {featured && (
-          <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-0 overflow-hidden rounded-card border border-border bg-card mb-8 fade-up">
-            {/* Image */}
-            <div className="relative overflow-hidden group">
-              {featured.image && (
-                <Image
-                  src={featured.image}
-                  alt={featured.title}
-                  width={800}
-                  height={500}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              )}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                <span className="text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  View →
-                </span>
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="p-8 flex flex-col justify-center">
-              <span className="text-label uppercase tracking-[0.08em] text-accent">
-                {featured.type}
-              </span>
-              <h3 className="text-h3 text-text-primary mt-3">{featured.title}</h3>
-              {featured.outcome && (
-                <p className="text-text-secondary mt-2">{featured.outcome}</p>
-              )}
-              {featured.liveUrl && (
-                <a
-                  href={featured.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent font-semibold mt-4 inline-flex items-center gap-1 hover:underline"
-                  aria-label={`View project: ${featured.title}`}
+        {/* Tab content */}
+        {activeTab === 'clinic' ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+            {clinicProjects.map((project) => (
+              <div
+                key={project.name}
+                className={`card fade-up fade-up-delay-${project.delay} overflow-hidden p-0`}
+              >
+                {/* Preview area */}
+                <div
+                  className={`h-[200px] ${project.gradient} p-6 flex flex-col justify-between relative`}
                 >
-                  View Project →
-                </a>
-              )}
-            </div>
-          </div>
-        )}
+                  {/* Type tag */}
+                  <span className="inline-flex bg-white/10 text-white/80 text-xs font-semibold px-3 py-1 rounded-pill self-start">
+                    {project.type}
+                  </span>
 
-        {/* Remaining projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {rest.map((project, i) => (
-            <div
-              key={project.title}
-              className={`rounded-card border border-border bg-card overflow-hidden group fade-up fade-up-delay-${i + 1}`}
-            >
-              {/* Image */}
-              <div className="relative overflow-hidden h-48">
-                {project.image && (
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    width={600}
-                    height={300}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    View →
+                  {/* Center content */}
+                  <div>
+                    <h3 className="text-white font-bold text-lg">
+                      {project.name}
+                    </h3>
+                    <p className="text-white/50 text-xs mt-1">
+                      {project.location}
+                    </p>
+                  </div>
+
+                  {/* Mock WhatsApp button */}
+                  <span className="bg-whatsapp/80 text-white text-xs font-bold px-4 py-2 rounded-btn inline-flex items-center gap-1.5 self-start">
+                    📱 Book Appointment
                   </span>
                 </div>
-              </div>
 
-              {/* Info */}
-              <div className="p-6">
-                <span className="text-xs bg-accent-subtle text-accent px-2 py-0.5 rounded-pill">
-                  {project.type}
-                </span>
-                <h3 className="text-lg font-semibold text-text-primary mt-2">
-                  {project.title}
-                </h3>
-                {project.outcome && (
-                  <p className="text-sm text-text-secondary mt-1">{project.outcome}</p>
-                )}
-                {(project.liveUrl || project.githubUrl) && (
-                  <a
-                    href={project.liveUrl || project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-accent text-sm mt-3 inline-flex items-center gap-1 hover:underline"
-                    aria-label={`View project: ${project.title}`}
-                  >
-                    View Project
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
-                )}
+                {/* Content area */}
+                <div className="p-5">
+                  <p className="text-text-primary font-semibold text-base">
+                    {project.name}
+                  </p>
+                  <p className="text-accent text-sm mt-2 font-medium">
+                    {project.result}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-10 text-center py-16">
+            <p className="text-text-muted italic">
+              Coming soon — personal and business projects.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,262 +1,251 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  SPECIALTY_OPTIONS,
-  NEED_OPTIONS,
-  BUDGET_OPTIONS,
-  CONTACT,
-} from '@/lib/constants';
-import { buildFormWhatsAppURL, validatePhone } from '@/lib/utils';
 
-interface FormData {
-  name: string;
-  clinic: string;
-  specialty: string;
-  phone: string;
-  needs: string[];
-  budget: string;
-  message: string;
-}
+const SPECIALTIES = [
+  '',
+  'General Physician',
+  'Dentist',
+  'Dermatologist',
+  'Orthopedic',
+  'Gynecologist',
+  'Cardiologist',
+  'Pediatrician',
+  'Other',
+];
+
+const NEED_OPTIONS = ['New Website', 'Redesign Existing Site', 'SEO Only', 'Not Sure Yet'];
+
+const BUDGET_OPTIONS = ['Under ₹15K', '₹15K–₹25K', '₹25K+', 'Let Abhinay Suggest'];
 
 export default function ContactForm() {
-  const [form, setForm] = useState<FormData>({
-    name: '',
-    clinic: '',
-    specialty: '',
-    phone: '',
-    needs: [],
-    budget: '',
-    message: '',
-  });
-  const [phoneError, setPhoneError] = useState('');
+  const [name, setName] = useState('');
+  const [clinic, setClinic] = useState('');
+  const [specialty, setSpecialty] = useState('');
+  const [phone, setPhone] = useState('');
+  const [needs, setNeeds] = useState<string[]>([]);
+  const [budget, setBudget] = useState('');
+  const [notes, setNotes] = useState('');
 
-  const updateField = (field: keyof FormData, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const toggleNeed = (need: string) => {
-    setForm((prev) => ({
-      ...prev,
-      needs: prev.needs.includes(need)
-        ? prev.needs.filter((n) => n !== need)
-        : [...prev.needs, need],
-    }));
+  const toggleNeed = (option: string) => {
+    setNeeds((prev) =>
+      prev.includes(option) ? prev.filter((n) => n !== option) : [...prev, option]
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validatePhone(form.phone)) {
-      setPhoneError('Please enter a valid 10-digit Indian mobile number');
-      return;
-    }
-    setPhoneError('');
-    const url = buildFormWhatsAppURL({
-      name: form.name,
-      clinic: form.clinic,
-      specialty: form.specialty,
-      phone: form.phone,
-      needs: form.needs,
-      budget: form.budget,
-      message: form.message,
-    });
-    window.open(url, '_blank');
+    const msg = encodeURIComponent(
+      `Hi Abhinay, I'm interested in a website for my clinic.\n\n` +
+        `Name: ${name}\nClinic: ${clinic}\nSpecialty: ${specialty}\n` +
+        `Phone: ${phone}\nNeeds: ${needs.join(', ')}\n` +
+        `Budget: ${budget}\nNotes: ${notes || 'None'}`
+    );
+    window.open(`https://wa.me/918074782997?text=${msg}`, '_blank');
   };
 
   const inputClasses =
-    'w-full bg-base border border-border rounded-btn px-4 py-3 text-text-primary placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent-subtle outline-none transition-all';
+    'w-full bg-card border border-border rounded-btn px-4 py-3 text-text-primary placeholder:text-text-muted text-sm focus:outline-none focus:border-accent transition-colors';
+
+  const labelClasses = 'text-text-primary text-sm font-medium mb-2 block';
 
   return (
-    <section id="contact" className="py-16 lg:py-24">
-      <div className="max-w-container mx-auto px-6">
-        {/* Headline */}
-        <h2 className="font-display text-h2 text-text-primary text-center mb-2 fade-up">
-          Tell Me About Your Clinic
-        </h2>
-
-        {/* Subheadline */}
-        <p className="text-body-lg text-text-secondary text-center mb-12 fade-up fade-up-delay-1">
-          I&apos;ll send you a free demo website based on what you share.
-        </p>
-
-        {/* Form card */}
-        <div className="max-w-2xl mx-auto glass rounded-2xl p-6 lg:p-10 fade-up fade-up-delay-2">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Your Name */}
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-text-secondary mb-2"
-              >
-                Your Name <span className="text-accent">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                required
-                value={form.name}
-                onChange={(e) => updateField('name', e.target.value)}
-                placeholder="Dr. Priya Sharma"
-                className={inputClasses}
-              />
-            </div>
-
-            {/* Clinic / Practice Name */}
-            <div>
-              <label
-                htmlFor="clinic"
-                className="block text-sm font-medium text-text-secondary mb-2"
-              >
-                Clinic / Practice Name <span className="text-accent">*</span>
-              </label>
-              <input
-                type="text"
-                id="clinic"
-                required
-                value={form.clinic}
-                onChange={(e) => updateField('clinic', e.target.value)}
-                placeholder="Sharma Dental Clinic"
-                className={inputClasses}
-              />
-            </div>
-
-            {/* Two columns: Specialty + WhatsApp Number */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Specialty */}
-              <div>
-                <label
-                  htmlFor="specialty"
-                  className="block text-sm font-medium text-text-secondary mb-2"
-                >
-                  Specialty <span className="text-accent">*</span>
-                </label>
-                <select
-                  id="specialty"
-                  required
-                  value={form.specialty}
-                  onChange={(e) => updateField('specialty', e.target.value)}
-                  className={`${inputClasses} appearance-none`}
-                >
-                  <option value="" disabled>
-                    Select specialty
-                  </option>
-                  {SPECIALTY_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* WhatsApp Number */}
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-text-secondary mb-2"
-                >
-                  WhatsApp Number <span className="text-accent">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  required
-                  value={form.phone}
-                  onChange={(e) => {
-                    updateField('phone', e.target.value);
-                    if (phoneError) setPhoneError('');
-                  }}
-                  placeholder="80747XXXXX"
-                  className={`${inputClasses} ${phoneError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''}`}
-                />
-                {phoneError && (
-                  <p className="text-red-400 text-xs mt-1">{phoneError}</p>
-                )}
-              </div>
-            </div>
-
-            {/* What do you need? - Checkboxes */}
-            <div>
-              <p className="block text-sm font-medium text-text-secondary mb-2">
-                What do you need?
-              </p>
-              <div className="space-y-3">
-                {NEED_OPTIONS.map((option) => (
-                  <label key={option} className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={form.needs.includes(option)}
-                      onChange={() => toggleNeed(option)}
-                      className="w-5 h-5 rounded border-border accent-accent"
-                    />
-                    <span className="text-sm text-text-secondary">{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Budget Range - Radio buttons (optional) */}
-            <div>
-              <p className="block text-sm font-medium text-text-secondary mb-2">
-                Budget Range{' '}
-                <span className="text-text-muted font-normal">(optional)</span>
-              </p>
-              <div className="space-y-3">
-                {BUDGET_OPTIONS.map((option) => (
-                  <label key={option} className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="budget"
-                      value={option}
-                      checked={form.budget === option}
-                      onChange={(e) => updateField('budget', e.target.value)}
-                      className="w-5 h-5 accent-accent"
-                    />
-                    <span className="text-sm text-text-secondary">{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Anything else? */}
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-text-secondary mb-2"
-              >
-                Anything else?{' '}
-                <span className="text-text-muted font-normal">(optional)</span>
-              </label>
-              <textarea
-                id="message"
-                rows={3}
-                value={form.message}
-                onChange={(e) => updateField('message', e.target.value)}
-                placeholder="e.g., I want patients to book appointments online, I have photos to share..."
-                className={inputClasses}
-              />
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              aria-label="Send details via WhatsApp"
-              className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white rounded-btn py-4 font-bold text-lg transition-all mt-2"
-            >
-              Send My Details via WhatsApp →
-            </button>
-          </form>
-
-          {/* Fallback email */}
-          <p className="mt-4 text-center text-sm text-text-muted">
-            Or email me at:{' '}
-            <a
-              href={`mailto:${CONTACT.email}`}
-              className="text-accent hover:underline"
-            >
-              {CONTACT.email}
-            </a>
+    <section id="contact" className="py-24 bg-surface">
+      <div className="max-w-[700px] mx-auto px-6">
+        {/* Header */}
+        <div className="text-center">
+          <span className="section-label">// CONTACT</span>
+          <h2 className="text-h2 text-text-primary font-bold mt-4">Tell Me About Your Clinic</h2>
+          <p className="text-body-lg text-text-secondary mt-4">
+            I&apos;ll send you a free demo website based on what you share.
           </p>
         </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="mt-12 space-y-5">
+          {/* Name */}
+          <div>
+            <label htmlFor="name" className={labelClasses}>
+              Your Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Dr. Priya Sharma"
+              className={inputClasses}
+            />
+          </div>
+
+          {/* Clinic */}
+          <div>
+            <label htmlFor="clinic" className={labelClasses}>
+              Clinic / Practice Name
+            </label>
+            <input
+              id="clinic"
+              type="text"
+              required
+              value={clinic}
+              onChange={(e) => setClinic(e.target.value)}
+              placeholder="Sharma Dental Care"
+              className={inputClasses}
+            />
+          </div>
+
+          {/* Specialty */}
+          <div>
+            <label htmlFor="specialty" className={labelClasses}>
+              Specialty
+            </label>
+            <select
+              id="specialty"
+              required
+              value={specialty}
+              onChange={(e) => setSpecialty(e.target.value)}
+              className={`${inputClasses} appearance-none cursor-pointer`}
+            >
+              <option value="" disabled>
+                Select your specialty
+              </option>
+              {SPECIALTIES.filter(Boolean).map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label htmlFor="phone" className={labelClasses}>
+              WhatsApp Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+91 80747 82997"
+              className={inputClasses}
+            />
+          </div>
+
+          {/* Needs — Checkboxes */}
+          <div>
+            <span className={labelClasses}>What do you need?</span>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              {NEED_OPTIONS.map((option) => {
+                const checked = needs.includes(option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => toggleNeed(option)}
+                    className={`flex items-center gap-2.5 px-4 py-3 rounded-btn border text-sm text-left transition-colors ${
+                      checked
+                        ? 'bg-accent/10 border-accent/40 text-text-primary'
+                        : 'bg-card border-border text-text-secondary hover:border-border-hover'
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded-[4px] border flex-shrink-0 flex items-center justify-center transition-colors ${
+                        checked
+                          ? 'bg-accent border-accent'
+                          : 'border-border-hover bg-transparent'
+                      }`}
+                    >
+                      {checked && (
+                        <svg
+                          className="w-2.5 h-2.5 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </span>
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Budget — Radio */}
+          <div>
+            <span className={labelClasses}>Budget Range</span>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              {BUDGET_OPTIONS.map((option) => {
+                const selected = budget === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setBudget(option)}
+                    className={`flex items-center gap-2.5 px-4 py-3 rounded-btn border text-sm text-left transition-colors ${
+                      selected
+                        ? 'bg-accent/10 border-accent/40 text-text-primary'
+                        : 'bg-card border-border text-text-secondary hover:border-border-hover'
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
+                        selected
+                          ? 'border-accent'
+                          : 'border-border-hover'
+                      }`}
+                    >
+                      {selected && (
+                        <span className="w-2 h-2 rounded-full bg-accent" />
+                      )}
+                    </span>
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label htmlFor="notes" className={labelClasses}>
+              Anything else?
+            </label>
+            <textarea
+              id="notes"
+              rows={4}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. I want patients to book online, I have photos ready..."
+              className={`${inputClasses} resize-none`}
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold py-4 rounded-btn text-base transition-colors mt-2"
+          >
+            Send My Details via WhatsApp →
+          </button>
+        </form>
+
+        {/* Fallback */}
+        <p className="mt-4 text-center text-text-muted text-sm">
+          Or email me at:{' '}
+          <a
+            href="mailto:tippaniabhinay@gmail.com"
+            className="text-accent hover:underline"
+          >
+            tippaniabhinay@gmail.com
+          </a>
+        </p>
       </div>
     </section>
   );

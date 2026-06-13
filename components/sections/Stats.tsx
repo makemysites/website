@@ -1,70 +1,71 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { STATS } from '@/lib/constants';
-import { animateCounter } from '@/lib/animations';
 
 export default function Stats() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const numberRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated.current) {
-            hasAnimated.current = true;
-
-            STATS.forEach((stat, i) => {
-              const el = numberRefs.current[i];
-              const prefix = (stat as { prefix?: string }).prefix || '';
-              if (el) {
-                animateCounter(
-                  el,
-                  stat.number,
-                  1500,
-                  prefix,
-                  stat.suffix
-                );
-              }
-            });
-
-            observer.unobserve(section);
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     );
 
-    observer.observe(section);
+    const els = sectionRef.current?.querySelectorAll('.fade-up');
+    els?.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
 
+  const stats = [
+    {
+      number: '15+',
+      label: 'Clinic Websites Delivered',
+      sublabel: 'across Hyderabad',
+      delay: '',
+    },
+    {
+      number: '72hrs',
+      label: 'Average Time to Launch',
+      sublabel: 'from brief to live',
+      delay: 'fade-up-delay-1',
+    },
+    {
+      number: '100%',
+      label: 'Client Satisfaction',
+      sublabel: "free revisions until you're happy",
+      delay: 'fade-up-delay-2',
+    },
+    {
+      number: '₹15K',
+      label: 'Starting Price',
+      sublabel: 'one-time · no monthly fees ever',
+      delay: 'fade-up-delay-3',
+    },
+  ];
+
   return (
-    <section className="py-16 lg:py-24" ref={sectionRef}>
-      <div className="max-w-container mx-auto px-6">
+    <section ref={sectionRef} className="py-24 bg-surface">
+      <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {STATS.map((stat, i) => (
+          {stats.map((stat) => (
             <div
-              key={stat.label}
-              className={`card p-6 text-center fade-up fade-up-delay-${i + 1}`}
+              key={stat.number}
+              className={`card fade-up ${stat.delay} text-center py-8`}
             >
-              <span
-                ref={(el) => {
-                  numberRefs.current[i] = el;
-                }}
-                className="font-mono text-[36px] sm:text-[48px] lg:text-[56px] font-bold text-accent leading-none"
-              >
-                {(stat as { prefix?: string }).prefix || ''}0{stat.suffix}
-              </span>
-              <p className="text-label uppercase tracking-[0.08em] text-text-secondary mt-3">
+              <p className="font-mono text-[52px] font-bold text-accent leading-none">
+                {stat.number}
+              </p>
+              <p className="text-sm font-semibold text-text-primary uppercase tracking-wide mt-3">
                 {stat.label}
               </p>
+              <p className="text-xs text-text-muted mt-1">{stat.sublabel}</p>
             </div>
           ))}
         </div>
